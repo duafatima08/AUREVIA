@@ -1,7 +1,74 @@
 import { useState } from "react";
+import { myDatabase } from "../supabase/supabaseClient";
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setMessage("");
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const { error } = await myDatabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          setMessage(error.message);
+        } else {
+          setMessage("Login successful!");
+        }
+      } else {
+        const { error } = await myDatabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name,
+            },
+          },
+        });
+
+        if (error) {
+          setMessage(error.message);
+        } else {
+          setMessage(
+            "Account created successfully! Please check your email if confirmation is required."
+          );
+        }
+      }
+    } catch (error) {
+      setMessage("Something went wrong. Please try again.");
+    }
+
+    setLoading(false);
+  };
+
+  const handleGoogleLogin = async () => {
+    setMessage("");
+
+    const { error } = await myDatabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      setMessage(error.message);
+    }
+  };
 
   return (
     <section
@@ -69,85 +136,92 @@ function Auth() {
           {isLogin ? "Login" : "Create Account"}
         </h2>
 
-        {/* Name */}
-        {!isLogin && (
+        <form onSubmit={handleSubmit}>
+          {/* Name */}
+          {!isLogin && (
+            <div style={{ marginBottom: "18px" }}>
+              <label style={labelStyle}>Full Name</label>
+
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                style={inputStyle}
+                required
+              />
+            </div>
+          )}
+
+          {/* Email */}
           <div style={{ marginBottom: "18px" }}>
-            <label
-              style={{
-                display: "block",
-                color: "black",
-                fontSize: "14px",
-                marginBottom: "7px",
-              }}
-            >
-              Full Name
-            </label>
+            <label style={labelStyle}>Email</label>
 
             <input
-              type="text"
-              placeholder="Enter your name"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
               style={inputStyle}
+              required
             />
           </div>
-        )}
 
-        {/* Email */}
-        <div style={{ marginBottom: "18px" }}>
-          <label
+          {/* Password */}
+          <div style={{ marginBottom: "25px" }}>
+            <label style={labelStyle}>Password</label>
+
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              style={inputStyle}
+              required
+            />
+          </div>
+
+          {/* Message */}
+          {message && (
+            <p
+              style={{
+                color: message.includes("successful") ||
+                  message.includes("created")
+                  ? "green"
+                  : "firebrick",
+                fontSize: "13px",
+                lineHeight: "1.5",
+                marginBottom: "18px",
+              }}
+            >
+              {message}
+            </p>
+          )}
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
             style={{
-              display: "block",
+              width: "100%",
+              backgroundColor: loading ? "darkgray" : "gold",
               color: "black",
-              fontSize: "14px",
-              marginBottom: "7px",
+              border: "none",
+              padding: "13px",
+              borderRadius: "4px",
+              fontSize: "15px",
+              fontWeight: "600",
+              cursor: loading ? "not-allowed" : "pointer",
+              marginBottom: "20px",
             }}
           >
-            Email
-          </label>
-
-          <input
-            type="email"
-            placeholder="Enter your email"
-            style={inputStyle}
-          />
-        </div>
-
-        {/* Password */}
-        <div style={{ marginBottom: "25px" }}>
-          <label
-            style={{
-              display: "block",
-              color: "black",
-              fontSize: "14px",
-              marginBottom: "7px",
-            }}
-          >
-            Password
-          </label>
-
-          <input
-            type="password"
-            placeholder="Enter your password"
-            style={inputStyle}
-          />
-        </div>
-
-        {/* Main Button */}
-        <button
-          style={{
-            width: "100%",
-            backgroundColor: "gold",
-            color: "black",
-            border: "none",
-            padding: "13px",
-            borderRadius: "4px",
-            fontSize: "15px",
-            fontWeight: "600",
-            cursor: "pointer",
-            marginBottom: "20px",
-          }}
-        >
-          {isLogin ? "Login" : "Sign Up"}
-        </button>
+            {loading
+              ? "Please wait..."
+              : isLogin
+              ? "Login"
+              : "Sign Up"}
+          </button>
+        </form>
 
         {/* Divider */}
         <div
@@ -184,8 +258,10 @@ function Auth() {
           />
         </div>
 
-        {/* OAuth Button */}
+        {/* Google OAuth */}
         <button
+          type="button"
+          onClick={handleGoogleLogin}
           style={{
             width: "100%",
             backgroundColor: "white",
@@ -201,7 +277,7 @@ function Auth() {
           Continue with Google
         </button>
 
-        {/* Switch Login / Sign Up */}
+        {/* Switch */}
         <p
           style={{
             textAlign: "center",
@@ -215,7 +291,11 @@ function Auth() {
             : "Already have an account?"}
 
           <button
-            onClick={() => setIsLogin(!isLogin)}
+            type="button"
+            onClick={() => {
+              setIsLogin(!isLogin);
+              setMessage("");
+            }}
             style={{
               backgroundColor: "transparent",
               border: "none",
@@ -232,6 +312,13 @@ function Auth() {
     </section>
   );
 }
+
+const labelStyle = {
+  display: "block",
+  color: "black",
+  fontSize: "14px",
+  marginBottom: "7px",
+};
 
 const inputStyle = {
   width: "100%",

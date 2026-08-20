@@ -1,15 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-function Header() {
+function Header({ cartItems = [] }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    window.innerWidth <= 768
+  );
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+
+      setIsMobile(mobile);
+
+      if (!mobile) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
+  const isActive = (path) => location.pathname === path;
+
+  // Total quantity of products in cart
+  const cartCount = cartItems.reduce(
+    (total, item) => total + (item.quantity || 1),
+    0
+  );
 
   return (
     <header
       style={{
         width: "100%",
-        backgroundColor: "black",
-        color: "white",
-        padding: "18px 6%",
+        background:
+          "linear-gradient(90deg, black, midnightblue, darkslategray, black)",
+        color: "ivory",
+        padding: isMobile ? "14px 5%" : "18px 6%",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
@@ -17,176 +54,334 @@ function Header() {
         position: "sticky",
         top: 0,
         zIndex: 1000,
-        borderBottom: "1px solid dimgray",
+        borderBottom: "1px solid slategray",
+        boxShadow: "0 6px 25px black",
       }}
     >
       {/* Logo */}
-      <div
+
+      <Link
+        to="/"
+        onClick={closeMenu}
         style={{
-          fontSize: "26px",
+          textDecoration: "none",
+          color: "ivory",
+          fontSize: isMobile ? "21px" : "26px",
           fontWeight: "bold",
-          letterSpacing: "4px",
-          color: "gold",
+          letterSpacing: isMobile ? "3px" : "4px",
           whiteSpace: "nowrap",
+          textShadow: "0 0 14px lavender",
         }}
       >
         AUREVIA
-      </div>
+      </Link>
 
       {/* Desktop Navigation */}
-      <nav
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "28px",
-        }}
-      >
-        <button style={navButtonStyle}>Home</button>
 
-        <button style={navButtonStyle}>Collection</button>
-
-        <button style={navButtonStyle}>Add Product</button>
-
-        <button
+      {!isMobile && (
+        <nav
           style={{
-            ...navButtonStyle,
             display: "flex",
             alignItems: "center",
-            gap: "6px",
+            gap: "20px",
+            flexWrap: "wrap",
+            justifyContent: "flex-end",
           }}
         >
-          Cart
-          <span
+          <NavItem
+            to="/"
+            text="Home"
+            active={isActive("/")}
+          />
+
+          <NavItem
+            to="/collection"
+            text="Collection"
+            active={isActive("/collection")}
+          />
+
+          <NavItem
+            to="/add-product"
+            text="Add Product"
+            active={isActive("/add-product")}
+          />
+
+          {/* Cart */}
+
+          <Link
+            to="/cart"
             style={{
-              backgroundColor: "gold",
-              color: "black",
-              borderRadius: "50%",
-              width: "20px",
-              height: "20px",
+              ...navButtonStyle,
+              color: isActive("/cart")
+                ? "lavender"
+                : "ivory",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              fontSize: "11px",
-              fontWeight: "bold",
+              gap: "8px",
             }}
           >
-            0
-          </span>
-        </button>
+            Cart
 
-        <button
-          style={{
-            backgroundColor: "transparent",
-            color: "white",
-            border: "1px solid gold",
-            padding: "9px 18px",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
-        >
-          Login
-        </button>
+            <CartBadge count={cartCount} />
+          </Link>
 
-        <button
-          style={{
-            backgroundColor: "gold",
-            color: "black",
-            border: "1px solid gold",
-            padding: "9px 18px",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "600",
-          }}
-        >
-          Sign Up
-        </button>
-      </nav>
+          {/* Login */}
 
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        style={{
-          display: "none",
-          backgroundColor: "transparent",
-          color: "white",
-          border: "none",
-          fontSize: "28px",
-          cursor: "pointer",
-        }}
-      >
-        ☰
-      </button>
-
-      {/* Mobile Navigation */}
-      {menuOpen && (
-        <div
-          style={{
-            position: "absolute",
-            top: "72px",
-            left: 0,
-            width: "100%",
-            backgroundColor: "black",
-            borderTop: "1px solid dimgray",
-            borderBottom: "1px solid dimgray",
-            padding: "20px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-            boxSizing: "border-box",
-          }}
-        >
-          <button style={mobileButtonStyle}>Home</button>
-
-          <button style={mobileButtonStyle}>Collection</button>
-
-          <button style={mobileButtonStyle}>Add Product</button>
-
-          <button style={mobileButtonStyle}>Cart</button>
-
-          <button
+          <Link
+            to="/auth"
             style={{
-              ...mobileButtonStyle,
-              border: "1px solid gold",
-              padding: "10px",
+              backgroundColor: "transparent",
+              color: "ivory",
+              border: "1px solid slateblue",
+              padding: "9px 18px",
+              borderRadius: "20px",
+              fontSize: "14px",
+              textDecoration: "none",
+              whiteSpace: "nowrap",
             }}
           >
             Login
-          </button>
+          </Link>
 
-          <button
+          {/* Sign Up */}
+
+          <Link
+            to="/auth"
             style={{
-              ...mobileButtonStyle,
-              backgroundColor: "gold",
-              color: "black",
-              padding: "10px",
+              background:
+                "linear-gradient(135deg, midnightblue, mediumpurple)",
+              color: "ivory",
+              border: "1px solid slateblue",
+              padding: "10px 20px",
+              borderRadius: "20px",
+              fontSize: "14px",
+              fontWeight: "600",
+              textDecoration: "none",
+              boxShadow: "0 5px 15px slateblue",
+              whiteSpace: "nowrap",
             }}
           >
             Sign Up
-          </button>
+          </Link>
+        </nav>
+      )}
+
+      {/* Mobile Menu Button */}
+
+      {isMobile && (
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Toggle navigation menu"
+          style={{
+            backgroundColor: "transparent",
+            color: "lavender",
+            border: "none",
+            fontSize: "28px",
+            cursor: "pointer",
+            padding: "4px",
+            lineHeight: 1,
+          }}
+        >
+          {menuOpen ? "×" : "☰"}
+        </button>
+      )}
+
+      {/* Mobile Navigation */}
+
+      {isMobile && menuOpen && (
+        <div
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            width: "100%",
+            background:
+              "linear-gradient(180deg, black, midnightblue, darkslategray)",
+            borderTop: "1px solid slategray",
+            borderBottom: "1px solid slategray",
+            padding: "22px 6%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px",
+            boxSizing: "border-box",
+            boxShadow: "0 12px 30px black",
+          }}
+        >
+          <MobileItem
+            to="/"
+            text="Home"
+            active={isActive("/")}
+            onClick={closeMenu}
+          />
+
+          <MobileItem
+            to="/collection"
+            text="Collection"
+            active={isActive("/collection")}
+            onClick={closeMenu}
+          />
+
+          <MobileItem
+            to="/add-product"
+            text="Add Product"
+            active={isActive("/add-product")}
+            onClick={closeMenu}
+          />
+
+          {/* Mobile Cart */}
+
+          <Link
+            to="/cart"
+            onClick={closeMenu}
+            style={{
+              ...mobileButtonStyle,
+              color: isActive("/cart")
+                ? "lavender"
+                : "ivory",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              borderBottom: isActive("/cart")
+                ? "1px solid mediumpurple"
+                : "1px solid transparent",
+              paddingBottom: "8px",
+              textDecoration: "none",
+            }}
+          >
+            <span>Cart</span>
+
+            <CartBadge count={cartCount} />
+          </Link>
+
+          {/* Mobile Login */}
+
+          <Link
+            to="/auth"
+            onClick={closeMenu}
+            style={{
+              ...mobileButtonStyle,
+              border: "1px solid slateblue",
+              padding: "11px",
+              textAlign: "center",
+              borderRadius: "20px",
+              textDecoration: "none",
+            }}
+          >
+            Login
+          </Link>
+
+          {/* Mobile Sign Up */}
+
+          <Link
+            to="/auth"
+            onClick={closeMenu}
+            style={{
+              ...mobileButtonStyle,
+              background:
+                "linear-gradient(135deg, midnightblue, mediumpurple)",
+              color: "ivory",
+              border: "1px solid slateblue",
+              padding: "11px",
+              textAlign: "center",
+              borderRadius: "20px",
+              textDecoration: "none",
+              fontWeight: "600",
+            }}
+          >
+            Sign Up
+          </Link>
         </div>
       )}
     </header>
   );
 }
 
+/* Cart Badge */
+
+function CartBadge({ count }) {
+  return (
+    <span
+      style={{
+        background:
+          "linear-gradient(135deg, mediumpurple, midnightblue)",
+        color: "ivory",
+        borderRadius: "50%",
+        width: "22px",
+        height: "22px",
+        minWidth: "22px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "11px",
+        fontWeight: "bold",
+        boxShadow: "0 0 10px slateblue",
+      }}
+    >
+      {count}
+    </span>
+  );
+}
+
+/* Desktop Navigation Item */
+
+function NavItem({ to, text, active }) {
+  return (
+    <Link
+      to={to}
+      style={{
+        ...navButtonStyle,
+        color: active ? "lavender" : "ivory",
+        borderBottom: active
+          ? "2px solid mediumpurple"
+          : "2px solid transparent",
+        paddingBottom: "6px",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {text}
+    </Link>
+  );
+}
+
+/* Mobile Navigation Item */
+
+function MobileItem({ to, text, active, onClick }) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      style={{
+        ...mobileButtonStyle,
+        color: active ? "lavender" : "ivory",
+        borderBottom: active
+          ? "1px solid mediumpurple"
+          : "1px solid transparent",
+        paddingBottom: "8px",
+      }}
+    >
+      {text}
+    </Link>
+  );
+}
+
 const navButtonStyle = {
   backgroundColor: "transparent",
-  color: "white",
+  color: "ivory",
   border: "none",
   cursor: "pointer",
   fontSize: "14px",
   padding: "6px 0",
+  textDecoration: "none",
 };
 
 const mobileButtonStyle = {
   backgroundColor: "transparent",
-  color: "white",
+  color: "ivory",
   border: "none",
   cursor: "pointer",
   fontSize: "15px",
   textAlign: "left",
+  textDecoration: "none",
 };
 
 export default Header;

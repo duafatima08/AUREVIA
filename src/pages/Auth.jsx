@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { myDatabase } from "../supabase/supabaseClient";
+import { Link, useNavigate } from "react-router-dom";
+import { myDatabase } from "../supabase";
 
 function Auth() {
+  const navigate = useNavigate();
+
   const [isLogin, setIsLogin] = useState(true);
 
   const [name, setName] = useState("");
@@ -19,8 +22,9 @@ function Auth() {
 
     try {
       if (isLogin) {
+        // LOGIN
         const { error } = await myDatabase.auth.signInWithPassword({
-          email,
+          email: email.trim(),
           password,
         });
 
@@ -28,14 +32,19 @@ function Auth() {
           setMessage(error.message);
         } else {
           setMessage("Login successful!");
+
+          setTimeout(() => {
+            navigate("/");
+          }, 800);
         }
       } else {
+        // SIGN UP
         const { error } = await myDatabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
           options: {
             data: {
-              full_name: name,
+              full_name: name.trim(),
             },
           },
         });
@@ -46,107 +55,152 @@ function Auth() {
           setMessage(
             "Account created successfully! Please check your email if confirmation is required."
           );
+
+          setName("");
+          setEmail("");
+          setPassword("");
         }
       }
     } catch (error) {
+      console.error(error);
       setMessage("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
-  const handleGoogleLogin = async () => {
+  const switchMode = () => {
+    setIsLogin((current) => !current);
     setMessage("");
-
-    const { error } = await myDatabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-      },
-    });
-
-    if (error) {
-      setMessage(error.message);
-    }
+    setName("");
+    setEmail("");
+    setPassword("");
   };
 
   return (
     <section
       style={{
         minHeight: "100vh",
-        backgroundColor: "black",
+        width: "100%",
+        background:
+          "linear-gradient(135deg, black, midnightblue, darkslategray)",
+        color: "ivory",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "50px 20px",
+        padding: "60px 20px",
         boxSizing: "border-box",
       }}
     >
+      {/* Auth Card */}
+
       <div
         style={{
           width: "100%",
-          maxWidth: "450px",
-          backgroundColor: "white",
-          padding: "45px",
-          borderRadius: "8px",
+          maxWidth: "470px",
+          background:
+            "linear-gradient(145deg, ivory, lavender, whitesmoke)",
+          padding: "clamp(25px, 6vw, 48px)",
           boxSizing: "border-box",
-          boxShadow: "0 10px 40px dimgray",
+          borderRadius: "24px",
+          boxShadow: "0 25px 70px black",
+          border: "1px solid lightsteelblue",
         }}
       >
         {/* Brand */}
+
         <div
           style={{
             textAlign: "center",
             marginBottom: "30px",
           }}
         >
-          <h1
+          <Link
+            to="/"
             style={{
-              color: "black",
-              fontSize: "28px",
-              letterSpacing: "4px",
-              margin: "0 0 8px",
+              color: "midnightblue",
+              fontSize: "clamp(24px, 6vw, 30px)",
+              fontWeight: "700",
+              letterSpacing: "5px",
+              textDecoration: "none",
             }}
           >
             AUREVIA
+          </Link>
+
+          <p
+            style={{
+              color: "slateblue",
+              fontSize: "10px",
+              fontWeight: "600",
+              letterSpacing: "3px",
+              textTransform: "uppercase",
+              margin: "9px 0 0",
+            }}
+          >
+            The Art of Time
+          </p>
+        </div>
+
+        {/* Heading */}
+
+        <div
+          style={{
+            textAlign: "center",
+            marginBottom: "28px",
+          }}
+        >
+          <h1
+            style={{
+              color: "midnightblue",
+              fontSize: "clamp(25px, 6vw, 32px)",
+              margin: "0 0 10px",
+              lineHeight: "1.2",
+              fontWeight: "700",
+            }}
+          >
+            {isLogin ? "Welcome Back" : "Create Your Account"}
           </h1>
+
+          <div
+            style={{
+              width: "50px",
+              height: "3px",
+              background:
+                "linear-gradient(90deg, midnightblue, mediumpurple)",
+              margin: "0 auto 15px",
+              borderRadius: "5px",
+            }}
+          />
 
           <p
             style={{
               color: "dimgray",
               fontSize: "13px",
+              lineHeight: "1.6",
               margin: 0,
             }}
           >
             {isLogin
-              ? "Welcome back to Aurevia"
-              : "Create your Aurevia account"}
+              ? "Sign in to continue your Aurevia experience."
+              : "Join Aurevia and discover timeless timepieces."}
           </p>
         </div>
 
-        {/* Title */}
-        <h2
-          style={{
-            color: "black",
-            textAlign: "center",
-            fontSize: "25px",
-            marginBottom: "30px",
-          }}
-        >
-          {isLogin ? "Login" : "Create Account"}
-        </h2>
+        {/* Form */}
 
         <form onSubmit={handleSubmit}>
-          {/* Name */}
+          {/* Full Name - Sign Up Only */}
+
           {!isLogin && (
-            <div style={{ marginBottom: "18px" }}>
+            <div style={fieldStyle}>
               <label style={labelStyle}>Full Name</label>
 
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
+                placeholder="Enter your full name"
                 style={inputStyle}
                 required
               />
@@ -154,8 +208,9 @@ function Auth() {
           )}
 
           {/* Email */}
-          <div style={{ marginBottom: "18px" }}>
-            <label style={labelStyle}>Email</label>
+
+          <div style={fieldStyle}>
+            <label style={labelStyle}>Email Address</label>
 
             <input
               type="email"
@@ -168,7 +223,12 @@ function Auth() {
           </div>
 
           {/* Password */}
-          <div style={{ marginBottom: "25px" }}>
+
+          <div
+            style={{
+              marginBottom: "20px",
+            }}
+          >
             <label style={labelStyle}>Password</label>
 
             <input
@@ -177,112 +237,86 @@ function Auth() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
               style={inputStyle}
+              minLength={6}
               required
             />
           </div>
 
           {/* Message */}
+
           {message && (
-            <p
+            <div
               style={{
-                color: message.includes("successful") ||
+                backgroundColor:
+                  message.includes("successful") ||
                   message.includes("created")
-                  ? "green"
-                  : "firebrick",
-                fontSize: "13px",
-                lineHeight: "1.5",
+                    ? "honeydew"
+                    : "mistyrose",
+                borderLeft:
+                  message.includes("successful") ||
+                  message.includes("created")
+                    ? "3px solid seagreen"
+                    : "3px solid firebrick",
+                padding: "11px 13px",
                 marginBottom: "18px",
+                borderRadius: "8px",
+                boxSizing: "border-box",
               }}
             >
-              {message}
-            </p>
+              <p
+                style={{
+                  color:
+                    message.includes("successful") ||
+                    message.includes("created")
+                      ? "seagreen"
+                      : "firebrick",
+                  fontSize: "12px",
+                  lineHeight: "1.5",
+                  margin: 0,
+                }}
+              >
+                {message}
+              </p>
+            </div>
           )}
 
-          {/* Submit */}
+          {/* Submit Button */}
+
           <button
             type="submit"
             disabled={loading}
             style={{
               width: "100%",
-              backgroundColor: loading ? "darkgray" : "gold",
-              color: "black",
-              border: "none",
-              padding: "13px",
-              borderRadius: "4px",
-              fontSize: "15px",
-              fontWeight: "600",
+              background: loading
+                ? "slategray"
+                : "linear-gradient(135deg, midnightblue, mediumpurple)",
+              color: "ivory",
+              border: "1px solid slateblue",
+              padding: "14px",
+              borderRadius: "20px",
+              fontSize: "14px",
+              fontWeight: "700",
+              letterSpacing: "1px",
               cursor: loading ? "not-allowed" : "pointer",
-              marginBottom: "20px",
+              marginBottom: "22px",
+              boxShadow: "0 8px 20px lightsteelblue",
             }}
           >
             {loading
-              ? "Please wait..."
+              ? "Please Wait..."
               : isLogin
               ? "Login"
-              : "Sign Up"}
+              : "Create Account"}
           </button>
         </form>
 
-        {/* Divider */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            marginBottom: "20px",
-          }}
-        >
-          <div
-            style={{
-              flex: 1,
-              height: "1px",
-              backgroundColor: "lightgray",
-            }}
-          />
+        {/* Switch Login / Sign Up */}
 
-          <span
-            style={{
-              color: "gray",
-              fontSize: "12px",
-            }}
-          >
-            OR
-          </span>
-
-          <div
-            style={{
-              flex: 1,
-              height: "1px",
-              backgroundColor: "lightgray",
-            }}
-          />
-        </div>
-
-        {/* Google OAuth */}
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          style={{
-            width: "100%",
-            backgroundColor: "white",
-            color: "black",
-            border: "1px solid darkgray",
-            padding: "12px",
-            borderRadius: "4px",
-            fontSize: "14px",
-            cursor: "pointer",
-            marginBottom: "25px",
-          }}
-        >
-          Continue with Google
-        </button>
-
-        {/* Switch */}
         <p
           style={{
             textAlign: "center",
             color: "dimgray",
-            fontSize: "14px",
+            fontSize: "13px",
             margin: 0,
           }}
         >
@@ -292,17 +326,16 @@ function Auth() {
 
           <button
             type="button"
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setMessage("");
-            }}
+            onClick={switchMode}
             style={{
               backgroundColor: "transparent",
               border: "none",
-              color: "darkgoldenrod",
-              fontWeight: "600",
+              color: "slateblue",
+              fontWeight: "700",
               cursor: "pointer",
               marginLeft: "5px",
+              padding: 0,
+              fontSize: "13px",
             }}
           >
             {isLogin ? "Sign Up" : "Login"}
@@ -313,21 +346,28 @@ function Auth() {
   );
 }
 
+const fieldStyle = {
+  marginBottom: "18px",
+};
+
 const labelStyle = {
   display: "block",
-  color: "black",
-  fontSize: "14px",
+  color: "midnightblue",
+  fontSize: "13px",
+  fontWeight: "700",
   marginBottom: "7px",
 };
 
 const inputStyle = {
   width: "100%",
-  padding: "12px",
-  border: "1px solid lightgray",
-  borderRadius: "4px",
+  padding: "13px 14px",
+  border: "1px solid lightsteelblue",
+  borderRadius: "10px",
   boxSizing: "border-box",
   fontSize: "14px",
   outline: "none",
+  backgroundColor: "white",
+  color: "midnightblue",
 };
 
 export default Auth;

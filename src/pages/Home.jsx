@@ -1,11 +1,14 @@
 import Hero from "../Components/Hero";
 import ProductSection from "../Components/ProductSection";
 
-function Home() {
+function Home({ onAddToCart }) {
   return (
     <main>
       <Hero />
-      <ProductSection />
+
+      <ProductSection
+        onAddToCart={onAddToCart}
+      />
     </main>
   );
 }

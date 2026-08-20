@@ -1,20 +1,34 @@
+import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 
-import watchMen1 from "../assets/images/men 01.jpg";
-import watchMen2 from "../assets/images/men 2.jpg";
-import watchMen3 from "../assets/images/men 03.jpg";
-import watchMen4 from "../assets/images/men 04.jpg";
+import watchMen1 from "../assets/men 01.jpg";
+import watchMen2 from "../assets/men 2.jpg";
 
-import watchWomen1 from "../assets/images/women 1.avif";
-import watchWomen2 from "../assets/images/women 2.png";
-import watchWomen3 from "../assets/images/women 3.jpg";
-import watchWomen4 from "../assets/images/women 4.webp";
+import watchWomen1 from "../assets/women 1.avif";
 
-import watchUnisex1 from "../assets/images/unisex-1.jpg";
-import watchUnisex2 from "../assets/images/unisex-2.jpg";
+import watchUnisex1 from "../assets/unisex-1.jpg";
 
-function ProductSection() {
-  const watches = [
+function ProductSection({ onAddToCart }) {
+  const [screenSize, setScreenSize] = useState(
+    window.innerWidth
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenSize(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  const isMobile = screenSize <= 600;
+  const isTablet = screenSize > 600 && screenSize <= 1000;
+
+  const featuredWatches = [
     {
       id: 1,
       image: watchMen1,
@@ -30,46 +44,11 @@ function ProductSection() {
       price: 220,
     },
     {
-      id: 3,
-      image: watchMen3,
-      name: "Watch Men 03",
-      category: "Men",
-      price: 250,
-    },
-    {
-      id: 4,
-      image: watchMen4,
-      name: "Watch Men 04",
-      category: "Men",
-      price: 290,
-    },
-    {
       id: 5,
       image: watchWomen1,
       name: "Watch Women 01",
       category: "Women",
       price: 190,
-    },
-    {
-      id: 6,
-      image: watchWomen2,
-      name: "Watch Women 02",
-      category: "Women",
-      price: 230,
-    },
-    {
-      id: 7,
-      image: watchWomen3,
-      name: "Watch Women 03",
-      category: "Women",
-      price: 260,
-    },
-    {
-      id: 8,
-      image: watchWomen4,
-      name: "Watch Women 04",
-      category: "Women",
-      price: 300,
     },
     {
       id: 9,
@@ -78,83 +57,119 @@ function ProductSection() {
       category: "Unisex",
       price: 240,
     },
-    {
-      id: 10,
-      image: watchUnisex2,
-      name: "Watch Unisex 02",
-      category: "Unisex",
-      price: 280,
-    },
   ];
 
   return (
     <section
       style={{
-        backgroundColor: "ivory",
-        padding: "80px 7%",
+        width: "100%",
+        background:
+          "linear-gradient(180deg, ivory, lavender, whitesmoke)",
+        padding: isMobile
+          ? "60px 5%"
+          : isTablet
+          ? "70px 5%"
+          : "90px 7%",
         boxSizing: "border-box",
+        overflow: "hidden",
       }}
     >
       {/* Section Heading */}
+
       <div
         style={{
           textAlign: "center",
-          marginBottom: "50px",
+          width: "100%",
+          maxWidth: "700px",
+          margin: isMobile ? "0 auto 35px" : "0 auto 55px",
+          boxSizing: "border-box",
         }}
       >
         <p
           style={{
-            color: "darkgoldenrod",
-            fontSize: "13px",
-            letterSpacing: "4px",
+            color: "slateblue",
+            fontSize: isMobile ? "10px" : "12px",
+            fontWeight: "600",
+            letterSpacing: isMobile ? "3px" : "4px",
             textTransform: "uppercase",
-            marginBottom: "12px",
+            margin: "0 0 10px",
           }}
         >
-          Our Collection
+          Featured Collection
         </p>
 
         <h2
           style={{
-            color: "black",
-            fontSize: "clamp(32px, 5vw, 48px)",
+            color: "midnightblue",
+            fontSize: isMobile
+              ? "30px"
+              : isTablet
+              ? "38px"
+              : "clamp(32px, 5vw, 50px)",
+            lineHeight: "1.1",
             margin: "0 0 15px",
+            fontWeight: "700",
           }}
         >
           Timeless Timepieces
         </h2>
 
+        <div
+          style={{
+            width: "55px",
+            height: "3px",
+            background:
+              "linear-gradient(90deg, midnightblue, mediumpurple)",
+            margin: "0 auto 18px",
+            borderRadius: "5px",
+          }}
+        />
+
         <p
           style={{
             color: "dimgray",
-            maxWidth: "600px",
-            margin: "0 auto",
             lineHeight: "1.7",
-            fontSize: "15px",
+            fontSize: isMobile ? "13px" : "15px",
+            margin: 0,
           }}
         >
-          Explore our carefully selected collection of men's, women's,
-          and unisex watches designed to complement every style.
+          A curated selection of Aurevia's finest timepieces,
+          chosen for elegance, precision, and timeless style.
         </p>
       </div>
 
-      {/* Product Grid */}
+      {/* Featured Product Grid */}
+
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-          gap: "30px",
+
+          gridTemplateColumns: isMobile
+            ? "1fr"
+            : isTablet
+            ? "repeat(2, minmax(0, 1fr))"
+            : "repeat(4, minmax(0, 1fr))",
+
+          gap: isMobile
+            ? "20px"
+            : isTablet
+            ? "24px"
+            : "28px",
+
+          width: "100%",
           maxWidth: "1300px",
           margin: "0 auto",
+          boxSizing: "border-box",
         }}
       >
-        {watches.map((watch) => (
+        {featuredWatches.map((watch) => (
           <ProductCard
             key={watch.id}
             image={watch.image}
             name={watch.name}
             category={watch.category}
             price={watch.price}
+            onAddToCart={onAddToCart}
           />
         ))}
       </div>

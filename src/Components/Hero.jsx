@@ -1,4 +1,4 @@
-import heroWatch from "../assets/images/hero-watch.jpg";
+import heroWatch from "../assets/images/men 01.jpg";
 
 function Hero() {
   return (

@@ -106,7 +106,7 @@ function Header({ cartItems = [] }) {
             background:"linear-gradient(180deg, black, midnightblue, darkslategray)",borderTop: "1px solid slategray",borderBottom: "1px solid slategray",padding: "22px 6%",display: "flex",flexDirection: "column",gap: "16px",boxSizing: "border-box",boxShadow: "0 12px 30px black",
           }}>
           <MobileItem to="/"text="Home"active={isActive("/")}onClick={closeMenu}/>
-          <MobileIte to="/collection"text="Collection"    active={isActive("/collection")}onClick={closeMenu}/>
+          <MobileItem to="/collection"text="Collection"    active={isActive("/collection")}onClick={closeMenu}/>
 
           <MobileItem to="/add-product" text="Add Product"active={isActive("/add-product")}onClick={closeMenu}/>
 

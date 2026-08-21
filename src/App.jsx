@@ -51,57 +51,33 @@ function App() {
         <Route
           path="/"
           element={
-            <Home
-              cartItems={cartItems}
-              setCartItems={setCartItems}
-              onAddToCart={handleAddToCart}
-            />
-          }
-        />
+            <Home cartItems={cartItems} setCartItems={setCartItems} onAddToCart={handleAddToCart}/>
+          }/>
 
         {/* Collection */}
-        <Route
-          path="/collection"
+        <Route path="/collection"
           element={
-            <Collection
-              onAddToCart={handleAddToCart}
-            />
-          }
+            <Collection onAddToCart={handleAddToCart}
+            />}
         />
 
         {/* Authentication */}
-        <Route
-          path="/auth"
-          element={<Auth />}
-        />
+        <Route path="/auth" element={<Auth />}/>
 
         {/* Login */}
-        <Route
-          path="/login"
-          element={<Auth />}
-        />
+        <Route path="/login" element={<Auth />}/>
 
         {/* Sign Up */}
-        <Route
-          path="/signup"
-          element={<Auth />}
-        />
+        <Route path="/signup" element={<Auth />}/>
 
         {/* Add Product */}
-        <Route
-          path="/add-product"
-          element={<AddProduct />}
-        />
+        <Route path="/add-product"element={<AddProduct />}/>
 
         {/* Cart */}
-        <Route
-          path="/cart"
-          element={
-            <Cart
-              cartItems={cartItems}
+        <Route path="/cart" element={
+            <Cart cartItems={cartItems}
               setCartItems={setCartItems}
-            />
-          }
+            />}
         />
       </Routes>
 

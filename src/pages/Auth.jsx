@@ -78,109 +78,37 @@ function Auth() {
   };
 
   return (
-    <section
-      style={{
-        minHeight: "100vh",
-        width: "100%",
-        background:
-          "linear-gradient(135deg, black, midnightblue, darkslategray)",
-        color: "ivory",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "60px 20px",
-        boxSizing: "border-box",
-      }}
-    >
+    <section style={{minHeight: "100vh",width: "100%",background:"linear-gradient(135deg, black, midnightblue, darkslategray)",
+        color: "ivory",display: "flex",alignItems: "center",justifyContent: "center",padding: "60px 20px",boxSizing: "border-box",}}>
       {/* Auth Card */}
 
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "470px",
-          background:
-            "linear-gradient(145deg, ivory, lavender, whitesmoke)",
-          padding: "clamp(25px, 6vw, 48px)",
-          boxSizing: "border-box",
-          borderRadius: "24px",
-          boxShadow: "0 25px 70px black",
-          border: "1px solid lightsteelblue",
-        }}
-      >
+      <div style={{width: "100%",maxWidth: "470px",background:"linear-gradient(145deg, ivory, lavender, whitesmoke)",padding: "clamp(25px, 6vw, 48px)",
+          boxSizing: "border-box",borderRadius: "24px",boxShadow: "0 25px 70px black",border: "1px solid lightsteelblue",
+        }}>
         {/* Brand */}
 
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: "30px",
-          }}
-        >
-          <Link
-            to="/"
-            style={{
-              color: "midnightblue",
-              fontSize: "clamp(24px, 6vw, 30px)",
-              fontWeight: "700",
-              letterSpacing: "5px",
-              textDecoration: "none",
-            }}
-          >
-            AUREVIA
+        <div style={{textAlign: "center",marginBottom: "30px",}}>
+          <Link to="/"
+            style={{color: "midnightblue",fontSize: "clamp(24px, 6vw, 30px)",fontWeight: "700",letterSpacing: "5px",textDecoration: "none",
+            }}>AUREVIA
           </Link>
 
-          <p
-            style={{
-              color: "slateblue",
-              fontSize: "10px",
-              fontWeight: "600",
-              letterSpacing: "3px",
-              textTransform: "uppercase",
-              margin: "9px 0 0",
-            }}
-          >
-            The Art of Time
+          <p style={{color: "slateblue",fontSize: "10px",fontWeight: "600",letterSpacing: "3px",textTransform: "uppercase",margin: "9px 0 0",
+            }}>The Art of Time
           </p>
         </div>
 
         {/* Heading */}
 
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: "28px",
-          }}
-        >
-          <h1
-            style={{
-              color: "midnightblue",
-              fontSize: "clamp(25px, 6vw, 32px)",
-              margin: "0 0 10px",
-              lineHeight: "1.2",
-              fontWeight: "700",
-            }}
-          >
-            {isLogin ? "Welcome Back" : "Create Your Account"}
+        <div style={{textAlign: "center",marginBottom: "28px",}}>
+          <h1 style={{color: "midnightblue",fontSize: "clamp(25px, 6vw, 32px)",margin: "0 0 10px",lineHeight: "1.2",fontWeight: "700",
+            }}>{isLogin ? "Welcome Back" : "Create Your Account"}
           </h1>
 
-          <div
-            style={{
-              width: "50px",
-              height: "3px",
-              background:
-                "linear-gradient(90deg, midnightblue, mediumpurple)",
-              margin: "0 auto 15px",
-              borderRadius: "5px",
-            }}
-          />
+          <div style={{width: "50px",height: "3px",background:"linear-gradient(90deg, midnightblue, mediumpurple)",margin: "0 auto 15px",borderRadius: "5px",}}/>
 
-          <p
-            style={{
-              color: "dimgray",
-              fontSize: "13px",
-              lineHeight: "1.6",
-              margin: 0,
-            }}
-          >
+          <p style={{color: "dimgray",fontSize: "13px",lineHeight: "1.6",margin: 0,
+            }}>
             {isLogin
               ? "Sign in to continue your Aurevia experience."
               : "Join Aurevia and discover timeless timepieces."}
@@ -196,14 +124,7 @@ function Auth() {
             <div style={fieldStyle}>
               <label style={labelStyle}>Full Name</label>
 
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your full name"
-                style={inputStyle}
-                required
-              />
+              <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your full name" style={inputStyle} required/>
             </div>
           )}
 
@@ -212,41 +133,23 @@ function Auth() {
           <div style={fieldStyle}>
             <label style={labelStyle}>Email Address</label>
 
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              style={inputStyle}
-              required
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" style={inputStyle} required
             />
           </div>
 
           {/* Password */}
 
-          <div
-            style={{
-              marginBottom: "20px",
-            }}
-          >
+          <div style={{marginBottom: "20px",}}>
+
             <label style={labelStyle}>Password</label>
 
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              style={inputStyle}
-              minLength={6}
-              required
-            />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" style={inputStyle} minLength={6}required/>
           </div>
 
           {/* Message */}
 
           {message && (
-            <div
-              style={{
+            <div style={{
                 backgroundColor:
                   message.includes("successful") ||
                   message.includes("created")
@@ -257,51 +160,20 @@ function Auth() {
                   message.includes("created")
                     ? "3px solid seagreen"
                     : "3px solid firebrick",
-                padding: "11px 13px",
-                marginBottom: "18px",
-                borderRadius: "8px",
-                boxSizing: "border-box",
-              }}
-            >
-              <p
-                style={{
-                  color:
-                    message.includes("successful") ||
-                    message.includes("created")
-                      ? "seagreen"
-                      : "firebrick",
-                  fontSize: "12px",
-                  lineHeight: "1.5",
-                  margin: 0,
-                }}
-              >
-                {message}
-              </p>
+                padding: "11px 13px",marginBottom: "18px",borderRadius: "8px",boxSizing: "border-box",
+              }}>
+              <p style={{color:message.includes("successful") ||message.includes("created")
+                      ? "seagreen": "firebrick",fontSize: "12px",lineHeight: "1.5",margin: 0,
+                }}>{message}</p>
             </div>
           )}
 
           {/* Submit Button */}
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: "100%",
-              background: loading
-                ? "slategray"
-                : "linear-gradient(135deg, midnightblue, mediumpurple)",
-              color: "ivory",
-              border: "1px solid slateblue",
-              padding: "14px",
-              borderRadius: "20px",
-              fontSize: "14px",
-              fontWeight: "700",
-              letterSpacing: "1px",
-              cursor: loading ? "not-allowed" : "pointer",
-              marginBottom: "22px",
-              boxShadow: "0 8px 20px lightsteelblue",
-            }}
-          >
+          <button type="submit" disabled={loading}
+            style={{width: "100%",background: loading? "slategray": "linear-gradient(135deg, midnightblue, mediumpurple)",color: "ivory",border: "1px solid slateblue",padding: "14px",borderRadius: "20px",
+              fontSize: "14px",fontWeight: "700",letterSpacing: "1px",cursor: loading ? "not-allowed" : "pointer",marginBottom: "22px",boxShadow: "0 8px 20px lightsteelblue",
+            }}>
             {loading
               ? "Please Wait..."
               : isLogin
@@ -312,34 +184,14 @@ function Auth() {
 
         {/* Switch Login / Sign Up */}
 
-        <p
-          style={{
-            textAlign: "center",
-            color: "dimgray",
-            fontSize: "13px",
-            margin: 0,
-          }}
-        >
+        <p style={{textAlign: "center",color: "dimgray",fontSize: "13px",margin: 0,}}>
           {isLogin
             ? "Don't have an account?"
             : "Already have an account?"}
 
-          <button
-            type="button"
-            onClick={switchMode}
-            style={{
-              backgroundColor: "transparent",
-              border: "none",
-              color: "slateblue",
-              fontWeight: "700",
-              cursor: "pointer",
-              marginLeft: "5px",
-              padding: 0,
-              fontSize: "13px",
-            }}
-          >
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
+          <button type="button"onClick={switchMode}
+            style={{backgroundColor: "transparent",border: "none",color: "slateblue",fontWeight: "700",cursor: "pointer",marginLeft: "5px",padding: 0,fontSize: "13px",
+            }}>{isLogin ? "Sign Up" : "Login"} </button>
         </p>
       </div>
     </section>
@@ -351,23 +203,10 @@ const fieldStyle = {
 };
 
 const labelStyle = {
-  display: "block",
-  color: "midnightblue",
-  fontSize: "13px",
-  fontWeight: "700",
-  marginBottom: "7px",
-};
+  display: "block",color: "midnightblue",fontSize: "13px",fontWeight: "700", marginBottom: "7px",};
 
 const inputStyle = {
-  width: "100%",
-  padding: "13px 14px",
-  border: "1px solid lightsteelblue",
-  borderRadius: "10px",
-  boxSizing: "border-box",
-  fontSize: "14px",
-  outline: "none",
-  backgroundColor: "white",
-  color: "midnightblue",
-};
+  width: "100%", padding: "13px 14px",border: "1px solid lightsteelblue",borderRadius: "10px",
+  boxSizing: "border-box",fontSize: "14px",outline: "none",backgroundColor: "white",color: "midnightblue",};
 
 export default Auth;

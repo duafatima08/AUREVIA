@@ -5,10 +5,8 @@ function Home({ onAddToCart }) {
   return (
     <main>
       <Hero />
-
-      <ProductSection
-        onAddToCart={onAddToCart}
-      />
+       <ProductSection
+        onAddToCart={onAddToCart} />
     </main>
   );
 }
